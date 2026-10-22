@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ocean Theme Text Editor</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; padding: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #052e3b, #075985, #0f766e);
+    color: #e6fffb;
+  }
+  .app {
+    width: 100%; max-width: 850px; padding: 28px;
+    background: rgba(7, 31, 48, 0.94);
+    border: 1px solid rgba(153, 246, 228, 0.35);
+    border-radius: 22px;
+    box-shadow: 0 20px 55px rgba(0,0,0,.32);
+  }
+  header { text-align: center; margin-bottom: 25px; }
+  .tag {
+    display: inline-block; padding: 7px 13px; border-radius: 999px;
+    background: #134e4a; color: #99f6e4;
+    font-size: 12px; font-weight: bold; letter-spacing: 1px;
+  }
+  h1 { margin: 14px 0 8px; color: #a5f3fc; font-size: clamp(28px, 5vw, 40px); }
+  .subtitle { margin: 0; color: #b6d5df; line-height: 1.5; }
+  label { display: block; margin-bottom: 10px; font-weight: bold; color: #ccfbf1; }
+  textarea {
+    width: 100%; min-height: 250px; resize: vertical; display: block;
+    padding: 17px; border: 2px solid #0f766e; border-radius: 14px;
+    background: #ecfeff; color: #12313b;
+    font: 16px/1.7 Arial, sans-serif; outline: none;
+  }
+  textarea:focus { border-color: #67e8f9; box-shadow: 0 0 0 4px rgba(103,232,249,.18); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 17px; }
+  .stat {
+    text-align: center; padding: 17px 8px; border-radius: 14px;
+    background: linear-gradient(145deg, #134e4a, #164e63);
+    border: 1px solid #0f766e;
+  }
+  .number { display: block; font-size: 30px; font-weight: bold; color: #99f6e4; margin-bottom: 5px; }
+  .name { color: #c7e9ef; font-size: 12px; font-weight: bold; letter-spacing: .6px; text-transform: uppercase; }
+  .actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  button { border: 0; border-radius: 10px; padding: 12px 18px; font-weight: bold; font-size: 14px; cursor: pointer; }
+  .copy { background: #67e8f9; color: #083344; }
+  .clear { background: #164e63; color: #cffafe; border: 1px solid #22d3ee; }
+  .hint { text-align: center; margin: 17px 0 0; font-size: 12px; color: #9fc8d2; }
+  @media (max-width: 520px) {
+    .app { padding: 19px; }
+    .stats { gap: 7px; }
+    .stat { padding: 13px 4px; }
+    .number { font-size: 24px; }
+    .name { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <span class="tag">HTML · CSS · JAVASCRIPT</span>
+    <h1>🌊 Text Editor</h1>
+    <p class="subtitle">A fresh ocean-colour workspace for your writing.</p>
+  </header>
+
+  <label for="editor">Enter your text</label>
+  <textarea id="editor" placeholder="Start typing here..."></textarea>
+
+  <section class="stats" aria-live="polite">
+    <div class="stat"><span class="number" id="characters">0</span><span class="name">Characters</span></div>
+    <div class="stat"><span class="number" id="words">0</span><span class="name">Words</span></div>
+    <div class="stat"><span class="number" id="lines">0</span><span class="name">Lines</span></div>
+  </section>
+
+  <div class="actions">
+    <button class="copy" id="copyButton" type="button">Copy Text</button>
+    <button class="clear" id="clearButton" type="button">Clear Text</button>
+  </div>
+  <p class="hint">Counts update automatically as you type · Works offline in Acode preview</p>
+</main>
+<script>
+  const editor = document.getElementById('editor');
+  function updateCounts() {
+    const text = editor.value;
+    document.getElementById('characters').textContent = text.length;
+    document.getElementById('words').textContent = text.trim() ? text.trim().split(/\s+/).length : 0;
+    document.getElementById('lines').textContent = text.length ? text.split('\n').length : 0;
+  }
+  editor.addEventListener('input', updateCounts);
+  document.getElementById('clearButton').addEventListener('click', () => {
+    editor.value = '';
+    updateCounts();
+    editor.focus();
+  });
+  document.getElementById('copyButton').addEventListener('click', async () => {
+    const button = document.getElementById('copyButton');
+    try {
+      await navigator.clipboard.writeText(editor.value);
+      button.textContent = 'Copied!';
+    } catch (e) {
+      editor.select();
+      document.execCommand('copy');
+      button.textContent = 'Copied!';
+    }
+    setTimeout(() => button.textContent = 'Copy Text', 1500);
+  });
+  updateCounts();
+</script>
+</body>
+</html>
